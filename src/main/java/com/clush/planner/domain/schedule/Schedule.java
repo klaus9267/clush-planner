@@ -24,9 +24,9 @@ public class Schedule {
 
   private LocalDate date;
 
-  private LocalDateTime start;
+  private LocalDateTime startedAt;
 
-  private LocalDateTime end;
+  private LocalDateTime endedAt;
 
   @Column(nullable = false)
   private Importance importance;
