@@ -5,7 +5,10 @@ spring:
   jackson:
     serialization:
       indent-output: true
-
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
   datasource:
     #     local mysql
     #    driver-class-name: com.mysql.cj.jdbc.Driver
@@ -32,3 +35,8 @@ spring:
 jwt:
   expiration_time: 300000
   secret: clushclushclushclushclushclushclushclushclushclushclushclushclushclush
+
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: method
