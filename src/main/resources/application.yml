@@ -2,8 +2,33 @@ spring:
   output:
     ansi:
       enabled: always
-  profiles:
-    active: db, auth
   jackson:
     serialization:
       indent-output: true
+
+  datasource:
+    #     local mysql
+    #    driver-class-name: com.mysql.cj.jdbc.Driver
+    #    url: jdbc:mysql://localhost:3306/planner
+    #    username: root
+    #    password: 1111
+
+    #    h2
+    url: jdbc:h2:mem:local;MODE=MySQL;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      dialect: org.hibernate.dialect.MySQL5Dialect
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: create
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+        show_sql: true
+
+jwt:
+  expiration_time: 300000
+  secret: clushclushclushclushclushclushclushclushclushclushclushclushclushclush
