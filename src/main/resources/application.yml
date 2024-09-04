@@ -3,7 +3,7 @@ spring:
     ansi:
       enabled: always
   profiles:
-    active: db
+    active: db, auth
   jackson:
     serialization:
       indent-output: true
