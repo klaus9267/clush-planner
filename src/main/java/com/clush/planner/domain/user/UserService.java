@@ -35,6 +35,10 @@ public class UserService {
     return UserResponse.from(user);
   }
 
+  public User readUser(final long id) {
+    return userRepository.findById(id).orElseThrow(ErrorCode.NOT_FOUND_USER);
+  }
+
   public User login(final LoginRequest loginRequest) {
     return userRepository.findByUid(loginRequest.uid())
         .filter(user -> passwordEncoder.matches(loginRequest.password(), user.getPassword()))

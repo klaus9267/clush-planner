@@ -11,6 +11,8 @@ import java.util.function.Supplier;
 public enum ErrorCode implements Supplier<CustomException> {
   BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다"),
   INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호를 확인해주세요"),
+  INVALID_TEAM_USER(HttpStatus.BAD_REQUEST, "팀 멤버가 아닙니다"),
+  EMPTY_TEAM(HttpStatus.BAD_REQUEST, "소속된 팀이 없습니다"),
 
   INVALID_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 JWT 토큰입니다"),
   EXPIRED_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 JWT 토큰입니다"),
@@ -24,6 +26,7 @@ public enum ErrorCode implements Supplier<CustomException> {
 
   CONFLICT_UID(HttpStatus.CONFLICT, "사용중인 id 입니다"),
   CONFLICT_TEAM_NAME(HttpStatus.CONFLICT, "사용중인 팀 이름입니다"),
+  ALREADY_JOIN(HttpStatus.CONFLICT, "소속된 팀이 있습니다"),
 
   INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 서버 에러입니다"),
   ;
