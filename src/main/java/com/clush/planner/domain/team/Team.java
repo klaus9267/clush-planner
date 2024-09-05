@@ -25,4 +25,10 @@ public class Team {
 
   @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
   private final List<User> users = new ArrayList<>();
+
+  public static Team from(final String name) {
+    return Team.builder()
+        .name(name)
+        .build();
+  }
 }

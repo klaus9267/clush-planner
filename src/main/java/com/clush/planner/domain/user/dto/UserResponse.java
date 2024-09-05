@@ -34,4 +34,12 @@ public record UserResponse(
         .token(token)
         .build();
   }
+
+  public static UserResponse fromWithoutTeam(final User user) {
+    return UserResponse.builder()
+        .id(user.getId())
+        .uid(user.getUid())
+        .name(user.getName())
+        .build();
+  }
 }
