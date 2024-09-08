@@ -7,19 +7,12 @@ import lombok.Getter;
 import java.beans.ConstructorProperties;
 import java.time.LocalDateTime;
 
-@Getter
-public class TodoCondition {
-  @Parameter
-  private final boolean isDone;
-  @Parameter
-  private final LocalDateTime deadline;
-  @Parameter
-  private final Importance importance;
-
-  @ConstructorProperties({"isDone", "deadline", "importance"})
-  public TodoCondition(final Boolean isDone, final LocalDateTime deadline, final Importance importance) {
-    this.isDone = isDone;
-    this.deadline = deadline == null ? LocalDateTime.now() : deadline;
-    this.importance = importance;
-  }
+public record TodoCondition(
+    @Parameter
+    Boolean isDone,
+    @Parameter
+    LocalDateTime deadline,
+    @Parameter
+    Importance importance
+) {
 }

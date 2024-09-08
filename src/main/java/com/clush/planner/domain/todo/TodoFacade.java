@@ -51,7 +51,8 @@ public class TodoFacade {
   }
 
   public List<TodoResponse> readTodoInfos(final TodoCondition todoCondition) {
-    final List<Todo> todos = todoService.readTodos(todoCondition);
+    final long currentUserId = securityUtil.getCurrentUserId();
+    final List<Todo> todos = todoService.readTodos(todoCondition, currentUserId);
     return TodoResponse.from(todos);
   }
 
@@ -60,6 +61,13 @@ public class TodoFacade {
     final long currentUserId = securityUtil.getCurrentUserId();
     final Todo todo = todoService.readTodo(id, currentUserId);
     todo.updateTodo(todoRequest);
+  }
+
+  @Transactional
+  public void toggleTodo(final long id) {
+    final long currentUserId = securityUtil.getCurrentUserId();
+    final Todo todo = todoService.readTodo(id, currentUserId);
+    todo.toggleDone();
   }
 
   @Transactional

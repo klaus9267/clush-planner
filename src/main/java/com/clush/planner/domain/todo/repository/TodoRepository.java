@@ -1,5 +1,6 @@
-package com.clush.planner.domain.todo;
+package com.clush.planner.domain.todo.repository;
 
+import com.clush.planner.domain.todo.Todo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

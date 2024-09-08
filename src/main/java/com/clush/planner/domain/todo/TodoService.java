@@ -4,6 +4,8 @@ import com.clush.planner.application.handler.error.ErrorCode;
 import com.clush.planner.domain.team.Team;
 import com.clush.planner.domain.todo.dto.TodoRequest;
 import com.clush.planner.domain.todo.param.TodoCondition;
+import com.clush.planner.domain.todo.repository.TodoCustomRepository;
+import com.clush.planner.domain.todo.repository.TodoRepository;
 import com.clush.planner.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TodoService {
   private final TodoRepository todoRepository;
+  private final TodoCustomRepository todoCustomRepository;
 
   public void createTodo(final TodoRequest todoRequest, final User user) {
     final Todo todo = Todo.from(todoRequest, user);
@@ -25,8 +28,8 @@ public class TodoService {
     todoRepository.saveAll(todos);
   }
 
-  public List<Todo> readTodos(final TodoCondition todoCondition) {
-    return null;
+  public List<Todo> readTodos(final TodoCondition todoCondition, final long userid) {
+    return todoCustomRepository.readTodos(todoCondition, userid);
   }
 
   public Todo readTodo(final long id, final long userId) {

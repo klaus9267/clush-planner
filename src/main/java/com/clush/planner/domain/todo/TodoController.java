@@ -51,6 +51,12 @@ public class TodoController {
     todoFacade.updateTodo(id, todoRequest);
   }
 
+  @PatchMapping("{id}/toggle")
+  @SwaggerNoContent(summary = "Todo 완료상태 수정 API")
+  public void toggleTodo(@PathVariable("id") final long id) {
+    todoFacade.toggleTodo(id);
+  }
+
   @DeleteMapping("{id}")
   @SwaggerNoContent(summary = "Todo 삭제 API")
   public void deleteTodo(@PathVariable("id") final long id) {
