@@ -43,7 +43,7 @@ public class UserController {
 
   @PatchMapping("{name}")
   @SwaggerNoContent(summary = "내 정보 수정 API")
-  public void updateUser(@PathVariable("name") final String name) {
+  public void updateMyInfo(@PathVariable("name") final String name) {
     userService.updateUser(name);
   }
 

@@ -26,7 +26,7 @@ public enum ErrorCode implements Supplier<CustomException> {
   NOT_FOUND_TEAM(HttpStatus.NOT_FOUND, "해당 팀을 찾을 수 없습니다"),
   NOT_FOUND_TODO(HttpStatus.NOT_FOUND, "해당 Todo를 찾을 수 없습니다"),
 
-  CONFLICT_UID(HttpStatus.CONFLICT, "사용중인 id 입니다"),
+  CONFLICT_UID(HttpStatus.CONFLICT, "사용중인 uid 입니다"),
   CONFLICT_TEAM_NAME(HttpStatus.CONFLICT, "사용중인 팀 이름입니다"),
   ALREADY_JOIN(HttpStatus.CONFLICT, "소속된 팀이 있습니다"),
 

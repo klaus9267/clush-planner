@@ -17,6 +17,7 @@ public class WithCustomMockUserSecurityContextFactory implements WithSecurityCon
     String name = annotation.name();
 
     User user = User.builder()
+        .id(1L)
         .uid(uid)
         .password("test password")
         .name(name)
