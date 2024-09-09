@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @WithSecurityContext(factory = WithCustomMockUserSecurityContextFactory.class)
 public @interface WithCustomMockUser {
-  String uid() default "test uid123";
+  String uid() default "test uid1234";
 
   String name() default "test name";
 
