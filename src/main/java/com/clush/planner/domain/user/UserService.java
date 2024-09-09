@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -35,8 +37,17 @@ public class UserService {
     return UserResponse.from(user);
   }
 
+  public List<UserResponse> readUsersInfo(final List<Long> userIds) {
+    final List<User> users = userRepository.findAllById(userIds);
+    return UserResponse.from(users);
+  }
+
   public User readUser(final long id) {
     return userRepository.findById(id).orElseThrow(ErrorCode.NOT_FOUND_USER);
+  }
+
+  public List<User> readUsers(final List<Long> userIds) {
+    return userRepository.findAllById(userIds);
   }
 
   public User login(final LoginRequest loginRequest) {
