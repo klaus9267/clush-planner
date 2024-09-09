@@ -7,7 +7,6 @@ import com.clush.planner.domain.team.TeamRepository;
 import com.clush.planner.domain.user.User;
 import com.clush.planner.domain.user.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -41,8 +40,6 @@ class TeamIntegrationTest {
   UserRepository userRepository;
   @Autowired
   TeamRepository teamRepository;
-  @Autowired
-  EntityManager entityManager;
 
   @Test
   @Order(1)

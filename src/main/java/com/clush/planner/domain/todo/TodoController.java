@@ -30,7 +30,7 @@ public class TodoController {
   @PostMapping("{teamId}")
   @SwaggerCreated(summary = "팀 Todo 생성 API")
   public void createTeamTodos(@PathVariable("teamId") final long teamId, @RequestBody @Valid final TodoRequest todoRequest) {
-    todoFacade.createTodo(todoRequest);
+    todoFacade.createTeamTodos(todoRequest, teamId);
   }
 
   @GetMapping("{id}")
@@ -41,8 +41,8 @@ public class TodoController {
 
   @GetMapping
   @SwaggerOK(summary = "Todo 목록 조회 API")
-  public List<TodoResponse> readTodoInfos(@ParameterObject final TodoCondition todoCondition) {
-    return todoFacade.readTodoInfos(todoCondition);
+  public List<TodoResponse> readTodosInfo(@ParameterObject final TodoCondition todoCondition) {
+    return todoFacade.readTodosInfo(todoCondition);
   }
 
   @PatchMapping("{id}")

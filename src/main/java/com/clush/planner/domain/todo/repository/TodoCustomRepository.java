@@ -27,6 +27,8 @@ public class TodoCustomRepository {
         .ifPresent(isDone -> builder.and(todo.deadline.before(todoCondition.deadline())));
     Optional.ofNullable(todoCondition.importance())
         .ifPresent(isDone -> builder.and(todo.importance.eq(todoCondition.importance())));
+    Optional.ofNullable(todoCondition.teamId())
+        .ifPresent(isDone -> builder.and(todo.team.id.eq(todoCondition.teamId())));
 
     return jpaQueryFactory.selectFrom(todo)
         .where(builder)

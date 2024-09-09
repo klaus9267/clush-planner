@@ -37,6 +37,9 @@ public class TodoFacade {
     final User currentUser = userService.readUser(currentUserId);
     final Team team = teamService.readTeam(teamId);
 
+    if (currentUser.getTeam() == null) {
+      throw new CustomException(ErrorCode.EMPTY_TEAM);
+    }
     if (!currentUser.getTeam().getId().equals(team.getId())) {
       throw new CustomException(ErrorCode.INVALID_TEAM_USER);
     }
@@ -50,7 +53,7 @@ public class TodoFacade {
     return TodoResponse.from(todo);
   }
 
-  public List<TodoResponse> readTodoInfos(final TodoCondition todoCondition) {
+  public List<TodoResponse> readTodosInfo(final TodoCondition todoCondition) {
     final long currentUserId = securityUtil.getCurrentUserId();
     final List<Todo> todos = todoService.readTodos(todoCondition, currentUserId);
     return TodoResponse.from(todos);

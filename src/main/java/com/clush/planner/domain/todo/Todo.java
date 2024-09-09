@@ -50,9 +50,19 @@ public class Todo {
         .build();
   }
 
+  public static Todo from(final TodoRequest todoRequest, final User user, final Team team) {
+    return Todo.builder()
+        .name(todoRequest.name())
+        .deadline(todoRequest.deadline() == null ? null : todoRequest.deadline())
+        .importance(todoRequest.importance())
+        .user(user)
+        .team(team)
+        .build();
+  }
+
   public static List<Todo> from(final TodoRequest todoRequest, final Team team) {
     return team.getUsers().stream()
-        .map(user -> Todo.from(todoRequest, user))
+        .map(user -> Todo.from(todoRequest, user, team))
         .toList();
   }
 
