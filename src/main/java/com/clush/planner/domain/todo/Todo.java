@@ -16,7 +16,7 @@ import java.util.List;
 @Entity(name = "todos")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Getter
 public class Todo {
   @Id
@@ -26,9 +26,13 @@ public class Todo {
   @Column(nullable = false)
   private String name;
 
-  @Column(columnDefinition = "boolean default false")
   @Builder.Default
+  @Column(columnDefinition = "boolean default false")
   private boolean isDone = false;
+
+  @Builder.Default
+  @Column(columnDefinition = "boolean default false")
+  private boolean isShared = false;
 
   private LocalDateTime deadline;
 
@@ -60,6 +64,26 @@ public class Todo {
         .build();
   }
 
+
+  public static List<Todo> from(final List<User> users, final Todo todo) {
+    return users.stream()
+        .map(user -> todo.toBuilder()
+            .id(null)
+            .user(user)
+            .build())
+        .toList();
+  }
+
+  public static List<Todo> from(final Team team, final Todo todo) {
+    return team.getUsers().stream()
+        .map(user -> todo.toBuilder()
+            .id(null)
+            .user(user)
+            .team(team)
+            .build())
+        .toList();
+  }
+
   public static List<Todo> from(final TodoRequest todoRequest, final Team team) {
     return team.getUsers().stream()
         .map(user -> Todo.from(todoRequest, user, team))
@@ -74,5 +98,9 @@ public class Todo {
 
   public void toggleDone() {
     this.isDone = !this.isDone;
+  }
+
+  public void toggleShared() {
+    this.isShared = !this.isShared;
   }
 }
