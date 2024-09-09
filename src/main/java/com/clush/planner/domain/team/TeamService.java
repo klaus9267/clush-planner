@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
 public class TeamService {
   private final TeamRepository teamRepository;
 
-  public void createTeam(final String name) {
+  public Team createTeam(final String name) {
     teamRepository.findByName(name).ifPresent(team -> {
       throw new CustomException(ErrorCode.CONFLICT_TEAM_NAME);
     });
 
     final Team team = Team.from(name);
-    teamRepository.save(team);
+    return teamRepository.save(team);
   }
 
   public TeamResponse readTeamInfo(final long id) {

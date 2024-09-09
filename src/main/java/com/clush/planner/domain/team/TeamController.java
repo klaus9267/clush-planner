@@ -1,6 +1,6 @@
 package com.clush.planner.domain.team;
 
-import com.clush.planner.domain.common.swagger.SwaggerCreated;
+import com.clush.planner.domain.common.swagger.SwaggerCreatedWithBody;
 import com.clush.planner.domain.common.swagger.SwaggerNoContent;
 import com.clush.planner.domain.common.swagger.SwaggerOK;
 import com.clush.planner.domain.team.dto.TeamResponse;
@@ -16,9 +16,9 @@ public class TeamController {
   private final TeamFacade teamFacade;
 
   @PostMapping("{name}")
-  @SwaggerCreated(summary = "팀 생성 API")
-  public void createTeam(@PathVariable("name") final String name) {
-    teamFacade.createTeam(name);
+  @SwaggerCreatedWithBody(summary = "팀 생성 API")
+  public TeamResponse createTeam(@PathVariable("name") final String name) {
+    return teamFacade.createTeam(name);
   }
 
   @PostMapping("join/{id}")

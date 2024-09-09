@@ -36,6 +36,14 @@ public class Team {
     this.name = name;
   }
 
+  public void adduser(final User user) {
+    this.users.add(user);
+  }
+
+  public void removeUser(final User user) {
+    this.users.remove(user);
+  }
+
   @PreRemove
   public void clearUsers() {
     for (User user : this.users) {

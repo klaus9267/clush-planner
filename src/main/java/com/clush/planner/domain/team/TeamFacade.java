@@ -18,8 +18,9 @@ public class TeamFacade {
   private final SecurityUtil securityUtil;
 
   @Transactional
-  public void createTeam(final String name) {
-    teamService.createTeam(name);
+  public TeamResponse createTeam(final String name) {
+    final Team team = teamService.createTeam(name);
+    return TeamResponse.from(team);
   }
 
   @Transactional
@@ -31,6 +32,7 @@ public class TeamFacade {
     }
     final Team team = teamService.readTeam(id);
     currentUser.joinTeam(team);
+    team.adduser(currentUser);
   }
 
   public TeamResponse readTeamInfo(final long id) {
@@ -41,6 +43,10 @@ public class TeamFacade {
   public void updateTeam(final Long id, final String name) {
     final User currentUser = securityUtil.getCurrentUser();
     final Team team = teamService.readTeam(id);
+
+    if (currentUser.getTeam() == null) {
+      throw new CustomException(ErrorCode.EMPTY_TEAM);
+    }
 
     if (!currentUser.getTeam().getId().equals(team.getId())) {
       throw new CustomException(ErrorCode.INVALID_TEAM_USER);
@@ -57,6 +63,7 @@ public class TeamFacade {
       throw new CustomException(ErrorCode.EMPTY_TEAM);
     }
 
+    user.getTeam().removeUser(user);
     user.leaveTeam();
   }
 

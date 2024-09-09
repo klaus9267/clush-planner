@@ -1,11 +1,9 @@
 package com.clush.planner.IntegrationTest;
 
-import com.clush.planner.application.auth.SecurityUtil;
-import com.clush.planner.application.handler.error.CustomException;
 import com.clush.planner.common.TestConfig;
 import com.clush.planner.common.WithCustomMockUser;
 import com.clush.planner.domain.user.User;
-import com.clush.planner.domain.user.UserService;
+import com.clush.planner.domain.user.UserRepository;
 import com.clush.planner.domain.user.dto.JoinRequest;
 import com.clush.planner.domain.user.dto.LoginRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -37,9 +37,7 @@ class UserIntegrationTest {
   @Autowired
   protected ObjectMapper objectMapper;
   @Autowired
-  SecurityUtil securityUtil;
-  @Autowired
-  UserService userService;
+  UserRepository userRepository;
 
   @Test
   @DisplayName("회원가입")
@@ -53,7 +51,7 @@ class UserIntegrationTest {
         .andDo(print())
         .andExpect(status().isCreated());
 
-    User user = userService.readUser(2L); //testConfig로 인한 선행 유저 존재
+    User user = userRepository.findById(2L).orElseThrow(NoSuchFieldException::new);
 
     assertThat(user.getUid()).isEqualTo(joinRequest.uid());
     assertThat(user.getName()).isEqualTo(joinRequest.name());
@@ -62,7 +60,7 @@ class UserIntegrationTest {
   @Test
   @DisplayName("로그인")
   void login() throws Exception {
-    User user = userService.readUser(1L);
+    User user = userRepository.findById(1L).orElseThrow(NoSuchFieldException::new);
 
     LoginRequest loginRequest = new LoginRequest(user.getUid(), "test password");
     String loginBody = objectMapper.writeValueAsString(loginRequest);
@@ -78,10 +76,10 @@ class UserIntegrationTest {
   }
 
   @Test
-  @DisplayName("내 정보 조회")
+  @DisplayName("내_정보_조회")
   @WithCustomMockUser
   void readCurrentUserInfo() throws Exception {
-    final User user = userService.readUser(1L);
+    final User user = userRepository.findById(1L).orElseThrow(NoSuchFieldException::new);
 
     mockMvc.perform(get(END_POINT))
         .andExpect(status().isOk())
@@ -92,7 +90,7 @@ class UserIntegrationTest {
   }
 
   @Test
-  @DisplayName("내 정보 수정")
+  @DisplayName("내_정보_수정")
   @WithCustomMockUser
   void updateMyInfo() throws Exception {
     String newName = "new name";
@@ -101,7 +99,7 @@ class UserIntegrationTest {
         .andExpect(status().isNoContent())
         .andDo(print());
 
-    final User user = userService.readUser(1L);
+    final User user = userRepository.findById(1L).orElseThrow(NoSuchFieldException::new);
 
     assertThat(user.getName()).isEqualTo(newName);
   }
@@ -114,6 +112,7 @@ class UserIntegrationTest {
         .andExpect(status().isNoContent())
         .andDo(print());
 
-    assertThatThrownBy(() -> userService.readUser(1L)).isInstanceOf(CustomException.class);
+    Optional<User> optionalUser = userRepository.findById(1L);
+    assertThatThrownBy(optionalUser::get).isInstanceOf(Exception.class);
   }
 }
