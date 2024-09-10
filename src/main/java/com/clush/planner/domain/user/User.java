@@ -53,4 +53,12 @@ public class User {
   public void updateName(final String name) {
     this.name = name;
   }
+
+  public void joinTeam(final Team team) {
+    this.team = team;
+  }
+
+  public void leaveTeam() {
+    this.team = null;
+  }
 }

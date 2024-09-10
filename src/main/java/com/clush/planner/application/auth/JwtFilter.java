@@ -35,10 +35,9 @@ public class JwtFilter extends OncePerRequestFilter {
         final Long userId = jwtUtil.getUserId(token);
 
         userRepository.findById(userId).ifPresentOrElse(user -> {
-              log.info("--------------------------------------- login(userId: {} ---------------------------------------", userId);
+              log.info("-- login(userId: {} ---", userId);
               UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(user, null, List.of(new SimpleGrantedAuthority("USER")));
               SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-              log.info("-------------------------------------------------------------------------------------------------");
             },
             () -> {
               log.warn("User not found for userId: {}", userId);

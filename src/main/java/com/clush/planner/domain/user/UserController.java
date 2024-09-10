@@ -12,6 +12,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -41,9 +43,15 @@ public class UserController {
     return userService.readCurrentUserInfo();
   }
 
+  @GetMapping("search")
+  @SwaggerOK(summary = "사용자 검색 API")
+  public List<UserResponse> searchUsersInfo(@RequestParam("userIds") final List<Long> userIds) {
+    return userService.readUsersInfo(userIds);
+  }
+
   @PatchMapping("{name}")
   @SwaggerNoContent(summary = "내 정보 수정 API")
-  public void updateUser(@PathVariable("name") final String name) {
+  public void updateMyInfo(@PathVariable("name") final String name) {
     userService.updateUser(name);
   }
 

@@ -23,6 +23,31 @@ public class Team {
   @Column(nullable = false)
   private String name;
 
-  @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "team")
   private final List<User> users = new ArrayList<>();
+
+  public static Team from(final String name) {
+    return Team.builder()
+        .name(name)
+        .build();
+  }
+
+  public void updateName(final String name) {
+    this.name = name;
+  }
+
+  public void adduser(final User user) {
+    this.users.add(user);
+  }
+
+  public void removeUser(final User user) {
+    this.users.remove(user);
+  }
+
+  @PreRemove
+  public void clearUsers() {
+    for (User user : this.users) {
+      user.leaveTeam();
+    }
+  }
 }
