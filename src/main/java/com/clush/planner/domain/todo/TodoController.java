@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/todos")
 @RequiredArgsConstructor
-@Tag(name = "Todo API")
+@Tag(name = "TODO API")
 public class TodoController {
   private final TodoFacade todoFacade;
 
@@ -31,6 +31,20 @@ public class TodoController {
   @SwaggerCreated(summary = "팀 Todo 생성 API")
   public void createTeamTodos(@PathVariable("teamId") final long teamId, @RequestBody @Valid final TodoRequest todoRequest) {
     todoFacade.createTeamTodos(todoRequest, teamId);
+  }
+
+  @PostMapping("share")
+  @SwaggerCreated(summary = "Todo 공유 API(사용자 선택)")
+  public void shareTodo(@RequestParam final List<Long> userIds,
+                        @RequestParam final long todoId) {
+    todoFacade.shareTodoToUsers(userIds, todoId);
+  }
+
+  @PostMapping("share/team")
+  @SwaggerCreated(summary = "Todo 공유 API(팀 선택)")
+  public void shareTodo(@RequestParam final long teamId,
+                        @RequestParam final long todoId) {
+    todoFacade.shareTodoToTeam(teamId, todoId);
   }
 
   @GetMapping("{id}")

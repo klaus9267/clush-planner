@@ -23,6 +23,10 @@ public class TodoService {
     todoRepository.save(todo);
   }
 
+  public void createTodos(final List<Todo> todos) {
+    todoRepository.saveAll(todos);
+  }
+
   public void createTeamTodo(final TodoRequest todoRequest, final Team team) {
     final List<Todo> todos = Todo.from(todoRequest, team);
     todoRepository.saveAll(todos);

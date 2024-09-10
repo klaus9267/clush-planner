@@ -11,12 +11,14 @@ import com.clush.planner.domain.todo.repository.TodoCustomRepository;
 import com.clush.planner.domain.todo.repository.TodoRepository;
 import com.clush.planner.domain.user.User;
 import com.clush.planner.domain.user.UserRepository;
+import com.clush.planner.domain.user.dto.JoinRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +56,8 @@ class TodoIntegrationTest {
   TodoRepository todoRepository;
   @Autowired
   TodoCustomRepository todoCustomRepository;
+  @Autowired
+  PasswordEncoder passwordEncoder;
 
   @Test
   @Order(1)
@@ -197,5 +201,69 @@ class TodoIntegrationTest {
 
     Optional<Todo> foundTodo = todoRepository.findById(todo.getId());
     assertThatThrownBy(foundTodo::get).isInstanceOf(Exception.class);
+  }
+
+  @Test
+  @Order(8)
+  @DisplayName("Todo_공유(사용자)")
+  @WithCustomMockUser
+  void shareTodoToUsers() throws Exception {
+    List<User> users = new ArrayList<>();
+    for (int i = 0; i < 10; i++) {
+      JoinRequest joinRequest = new JoinRequest("test name" + i, "test uid1234" + i, "test password");
+      User user = User.from(joinRequest, passwordEncoder);
+      users.add(user);
+    }
+    List<User> savedUsers = userRepository.saveAll(users);
+    List<Long> userIds = savedUsers.stream().map(User::getId).toList();
+
+    TodoRequest todoRequest = new TodoRequest("todo name", LocalDateTime.now().minusDays(1), Importance.MIDDLE);
+    User user = userRepository.findById(1L).orElseThrow(NoSuchElementException::new);
+    Todo todo = todoRepository.save(Todo.from(todoRequest, user));
+
+    mockMvc.perform(post(END_POINT + "/share")
+            .param("todoId", String.valueOf(todo.getId()))
+            .param("userIds", userIds.stream().map(String::valueOf).toArray(String[]::new)))
+        .andDo(print())
+        .andExpect(status().isCreated());
+
+    List<Todo> todos = todoRepository.findAll();
+    assertThat(todos).hasSize(users.size() + 1);
+  }
+
+  @Test
+  @Order(8)
+  @DisplayName("Todo_공유(사용자)")
+  @WithCustomMockUser
+  void shareTodoToTeam() throws Exception {
+    Team team = Team.from("new team");
+    Team savedTeam = teamRepository.save(team);
+
+    List<User> users = new ArrayList<>();
+    for (int i = 0; i < 10; i++) {
+      JoinRequest joinRequest = new JoinRequest("test name" + i, "test uid1234" + i, "test password");
+      User user = User.from(joinRequest, passwordEncoder);
+      savedTeam.adduser(user);
+      user.joinTeam(team);
+
+      users.add(user);
+    }
+    userRepository.saveAll(users);
+
+    TodoRequest todoRequest = new TodoRequest("todo name", LocalDateTime.now().minusDays(1), Importance.MIDDLE);
+    User user = userRepository.findById(1L).orElseThrow(NoSuchElementException::new);
+    Todo todo = todoRepository.save(Todo.from(todoRequest, user));
+
+    mockMvc.perform(post(END_POINT + "/share/team")
+            .param("todoId", String.valueOf(todo.getId()))
+            .param("teamId", String.valueOf(savedTeam.getId())))
+        .andDo(print())
+        .andExpect(status().isCreated());
+
+    List<Todo> todos = todoRepository.findAll();
+    assertThat(todos).hasSize(users.size() + 1);
+    for (int i = 1; i < todos.size(); i++) {
+      assertThat(todos.get(i).getTeam().getId()).isEqualTo(savedTeam.getId());
+    }
   }
 }

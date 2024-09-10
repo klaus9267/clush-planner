@@ -47,6 +47,24 @@ public class TodoFacade {
     todoService.createTeamTodo(todoRequest, team);
   }
 
+  @Transactional
+  public void shareTodoToUsers(final List<Long> userIds, final long todoId) {
+    final long currentUserId = securityUtil.getCurrentUserId();
+    final Todo todo = todoService.readTodo(todoId, currentUserId);
+    final List<User> users = userService.readUsers(userIds);
+    final List<Todo> todos = Todo.from(users, todo);
+    todoService.createTodos(todos);
+  }
+
+  @Transactional
+  public void shareTodoToTeam(final long teamId, final long todoId) {
+    final long currentUserId = securityUtil.getCurrentUserId();
+    final Team team = teamService.readTeam(teamId);
+    final Todo todo = todoService.readTodo(todoId, currentUserId);
+    final List<Todo> todos = Todo.from(team, todo);
+    todoService.createTodos(todos);
+  }
+
   public TodoResponse readTodoInfo(final long id) {
     final long currentUserId = securityUtil.getCurrentUserId();
     final Todo todo = todoService.readTodo(id, currentUserId);

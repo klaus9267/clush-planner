@@ -13,9 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,6 +42,8 @@ class UserIntegrationTest {
   protected ObjectMapper objectMapper;
   @Autowired
   UserRepository userRepository;
+  @Autowired
+  PasswordEncoder passwordEncoder;
 
   @Test
   @DisplayName("회원가입")
@@ -87,6 +93,38 @@ class UserIntegrationTest {
         .andExpect(jsonPath("$.id").exists())
         .andExpect(jsonPath("$.uid").value(user.getUid()))
         .andExpect(jsonPath("$.name").value(user.getName()));
+  }
+
+  @Test
+  @DisplayName("사용자_검색")
+  @WithCustomMockUser
+  void searchUsersInfo() throws Exception {
+    List<User> users = new ArrayList<>();
+
+    for (int i = 0; i < 10; i++) {
+      JoinRequest joinRequest = new JoinRequest("test name" + i, "test uid1234", "test password");
+      User user = User.from(joinRequest, passwordEncoder);
+      users.add(user);
+    }
+
+    List<User> savedUsers = userRepository.saveAll(users);
+    String[] userIds = savedUsers.stream()
+        .map(savedUser -> {
+          long userId = savedUser.getId();
+          return String.valueOf(userId);
+        })
+        .toArray(String[]::new);
+
+    ResultActions actions = mockMvc.perform(get(END_POINT + "/search")
+            .param("userIds", userIds))
+        .andExpect(status().isOk())
+        .andDo(print());
+
+    for (int i = 1; i < savedUsers.size(); i++) {
+      actions.andExpect(jsonPath("$[%d].id".formatted(i)).value(savedUsers.get(i).getId()))
+          .andExpect(jsonPath("$[%d].uid".formatted(i)).value(savedUsers.get(i).getUid()))
+          .andExpect(jsonPath("$[%d].name".formatted(i)).value(savedUsers.get(i).getName()));
+    }
   }
 
   @Test
