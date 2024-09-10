@@ -42,7 +42,31 @@ public class ScheduleFacade {
     if (!currentUser.getTeam().getId().equals(team.getId())) {
       throw new CustomException(ErrorCode.INVALID_TEAM_USER);
     }
-    scheduleService.createTeamSchedule(scheduleRequest, team, currentUser);
+    scheduleService.createTeamSchedule(scheduleRequest, team);
+  }
+
+  @Transactional
+  public void shareScheduleToUsers(final List<Long> userIds, final long scheduleId) {
+    final long currentUserId = securityUtil.getCurrentUserId();
+    final Schedule schedule = scheduleService.readSchedule(scheduleId);
+    if (!schedule.getUser().getId().equals(currentUserId)) {
+      throw new CustomException(ErrorCode.INVALID_USER);
+    }
+    final List<User> users = userService.readUsers(userIds);
+    final List<Schedule> schedules = Schedule.from(users, schedule);
+    scheduleService.createSchedules(schedules);
+  }
+
+  @Transactional
+  public void shareScheduleToTeam(final long teamId, final long scheduleId) {
+    final long currentUserId = securityUtil.getCurrentUserId();
+    final Schedule schedule = scheduleService.readSchedule(scheduleId);
+    final Team team = teamService.readTeam(teamId);
+    if (!schedule.getUser().getId().equals(currentUserId)) {
+      throw new CustomException(ErrorCode.INVALID_USER);
+    }
+    final List<Schedule> schedules = Schedule.from(team, schedule, currentUserId);
+    scheduleService.createSchedules(schedules);
   }
 
   public ScheduleResponse readScheduleInfo(final long id) {

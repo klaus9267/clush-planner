@@ -17,7 +17,7 @@ import java.util.List;
 @Entity(name = "schedules")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Getter
 public class Schedule {
   @Id
@@ -53,9 +53,8 @@ public class Schedule {
         .build();
   }
 
-  public static List<Schedule> from(final ScheduleRequest scheduleRequest, final Team team, final User currentUser) {
+  public static List<Schedule> from(final ScheduleRequest scheduleRequest, final Team team) {
     return team.getUsers().stream()
-        .filter(user -> !user.getId().equals(currentUser.getId()))
         .map(user -> Schedule.builder()
             .name(scheduleRequest.name())
             .date(scheduleRequest.date())
@@ -66,7 +65,27 @@ public class Schedule {
             .team(team)
             .build()
         ).toList();
+  }
 
+  public static List<Schedule> from(final Team team, final Schedule schedule, final long userId) {
+    return team.getUsers().stream()
+        .filter(user -> !user.getId().equals(userId))
+        .map(user -> schedule.toBuilder()
+            .id(null)
+            .team(team)
+            .user(user)
+            .build()
+        )
+        .toList();
+  }
+
+  public static List<Schedule> from(final List<User> users, final Schedule schedule) {
+    return users.stream()
+        .map(user -> schedule.toBuilder()
+            .id(null)
+            .user(user)
+            .build())
+        .toList();
   }
 
   public void updateSchedule(final ScheduleRequest scheduleRequest) {

@@ -33,6 +33,20 @@ public class ScheduleController {
     scheduleFacade.createTeamSchedule(teamId, scheduleRequest);
   }
 
+  @PostMapping("share")
+  @SwaggerCreated(summary = "일정 공유 API(사용자 선택)")
+  public void shareScheduleToUsers(@RequestParam final List<Long> userIds,
+                                   @RequestParam final long scheduleId) {
+    scheduleFacade.shareScheduleToUsers(userIds, scheduleId);
+  }
+
+  @PostMapping("share/team")
+  @SwaggerCreated(summary = "일정 공유 API(팀 선택)")
+  public void shareScheduleToTeam(@RequestParam final long teamId,
+                                  @RequestParam final long scheduleId) {
+    scheduleFacade.shareScheduleToTeam(teamId, scheduleId);
+  }
+
   @GetMapping("{id}")
   @SwaggerOK(summary = "일정 조회 API")
   public ScheduleResponse readScheduleInfo(@PathVariable("id") final long id) {

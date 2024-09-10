@@ -23,8 +23,12 @@ public class ScheduleService {
     scheduleRepository.save(schedule);
   }
 
-  public void createTeamSchedule(final ScheduleRequest scheduleRequest, final Team team, final User user) {
-    final List<Schedule> schedules = Schedule.from(scheduleRequest, team, user);
+  public void createTeamSchedule(final ScheduleRequest scheduleRequest, final Team team) {
+    final List<Schedule> schedules = Schedule.from(scheduleRequest, team);
+    scheduleRepository.saveAll(schedules);
+  }
+
+  public void createSchedules(final List<Schedule> schedules) {
     scheduleRepository.saveAll(schedules);
   }
 

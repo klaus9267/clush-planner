@@ -233,7 +233,7 @@ class TodoIntegrationTest {
 
   @Test
   @Order(8)
-  @DisplayName("Todo_공유(사용자)")
+  @DisplayName("Todo_공유(팀)")
   @WithCustomMockUser
   void shareTodoToTeam() throws Exception {
     Team team = Team.from("new team");

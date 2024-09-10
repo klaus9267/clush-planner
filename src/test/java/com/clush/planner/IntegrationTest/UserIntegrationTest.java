@@ -57,10 +57,10 @@ class UserIntegrationTest {
         .andDo(print())
         .andExpect(status().isCreated());
 
-    User user = userRepository.findById(2L).orElseThrow(NoSuchFieldException::new);
+    List<User> users = userRepository.findAll();
 
-    assertThat(user.getUid()).isEqualTo(joinRequest.uid());
-    assertThat(user.getName()).isEqualTo(joinRequest.name());
+    assertThat(users.get(1).getUid()).isEqualTo(joinRequest.uid());
+    assertThat(users.get(1).getName()).isEqualTo(joinRequest.name());
   }
 
   @Test
